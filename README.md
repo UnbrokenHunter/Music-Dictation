@@ -10,6 +10,14 @@ Music Dictation Practice App is a Python-based application designed to help user
 - Play generated melodies using integrated sound functionality.
 - Option to reveal notes on the staff for practice and learning purposes.
 
+## Usage
+- Select your settings.
+- Click Generate Melody.
+- Replay Melody as Many times as needed.
+- Click where you beleive the notes to be.
+- Click Reveal Notes.
+- Check to see if you were correct.
+
 ## Installation
 To run this application, go to Releases on the sidebar (on web view), and Click on whatever is the most recent version. Then scroll down and download the zip file. Extract it, and run the 'Main.exe'
 

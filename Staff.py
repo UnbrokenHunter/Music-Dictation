@@ -4,14 +4,75 @@ from tkinter import *
 from PIL import Image, ImageTk
 import os, shutil
 import time
+from copy import deepcopy
 
 latest_file = None  # Global variable to keep track of the latest file
+img_photo = None
+
+def create_no_notes_version(melody_stream):
+    # Create a deep copy of the melody stream using Python's deepcopy
+    no_notes_stream = deepcopy(melody_stream)
+
+    i = 0
+
+    # Iterate over the elements and replace notes with rests
+    for element in no_notes_stream.recurse():
+        if i > 1:
+            if isinstance(element, music21.note.Note) or isinstance(element, music21.chord.Chord):
+                # Replace the note or chord with a rest of the same duration
+                rest = music21.note.Rest(duration=element.duration)
+                index = element.getOffsetBySite(no_notes_stream)
+                no_notes_stream.remove(element, recurse=True)
+                no_notes_stream.insert(index, rest)
+        i += 1
+
+    return no_notes_stream
 
 def generate_unique_filename(base="temp_score", extension=".png"):
     timestamp = int(time.time())  # Current time as a unique identifier
     return f"{base}_{timestamp}{extension}"
 
-def staff(app, root):
+def crop_to_black_pixels(image_path, padding=20):
+    # Open the image
+    img = Image.open(image_path)
+
+    # Convert the image to grayscale
+    grayscale = img.convert('L')
+
+    # Initialize min/max values
+    left, top, right, bottom = img.width, img.height, 0, 0
+
+    # Process each pixel
+    for x in range(img.width):
+        for y in range(img.height):
+            # Check if the pixel is not white (assuming black or colored pixels)
+            if grayscale.getpixel((x, y)) < 250:  # Threshold for non-white; may need adjustment
+                # Update the bounds for cropping
+                if x < left:
+                    left = x
+                if y < top:
+                    top = y
+                if x > right:
+                    right = x
+                if y > bottom:
+                    bottom = y
+
+    # Check if any non-white pixel found
+    if left < right and top < bottom:
+        # Apply padding
+        left = max(left - padding, 0)
+        top = max(top - padding, 0)
+        right = min(right + padding, img.width)
+        bottom = min(bottom + padding, img.height)
+
+        # Crop the image
+        img_cropped = img.crop((left, top, right, bottom))
+        return img_cropped
+    else:
+        # No non-white pixels found; return original image
+        return img
+
+def staff(app, root, display_notes=False):
 
     print("Staff Method")
 
@@ -48,6 +109,9 @@ def staff(app, root):
             pageLayout.topMargin = 10
             pageLayout.bottomMargin = 10
 
+        # Adjust system layout settings
+        for systemLayout in stream.recurse().getElementsByClass('SystemLayout'):
+            systemLayout.systemDistance = 150  # Adjust this value as needed
 
         # Generate the score and write it to a MusicXML file
         musicxml_path = stream.write('musicxml')
@@ -66,29 +130,72 @@ def staff(app, root):
     def display_sheet_music(window, image_path):
         global img_photo  # Use a global variable to keep a reference to the image
 
-        # Load the new image
+        # Load the image from the file path
         img = Image.open(image_path)
-        img = img.resize((500, int(1.41 * 500)))  # Resize as needed
+
+        # Desired width or height
+        desired_width = int(window.winfo_screenwidth() * 2/3)
+        desired_height = 500
+
+        # Calculate the aspect ratio
+        aspect_ratio = img.width / img.height
+
+        # Resize while maintaining aspect ratio
+        if img.width > img.height:
+            new_width = desired_width
+            new_height = int(desired_width / aspect_ratio)
+        else:
+            new_height = desired_height
+            new_width = int(desired_height * aspect_ratio)
+
+        img = img.resize((new_width, new_height))
+
+        # Convert the Image object to a format that Tkinter can use
         img_photo = ImageTk.PhotoImage(img)
 
-        # Update or recreate the label with the new image
-        label = Label(window, image=img_photo)
-        label.image = img_photo  # Keep a reference to the image
+        # Create and place the canvas
+        canvas = Canvas(window, width=new_width, height=new_height)
+        canvas.create_image(new_width // 2, new_height // 2, anchor='center', image=img_photo)
 
-        # Configure the grid layout to center the label
-        window.grid_rowconfigure(0, weight=1)
-        window.grid_rowconfigure(2, weight=1)
-        window.grid_columnconfigure(0, weight=1)
-        window.grid_columnconfigure(2, weight=1)
-    
-        label.grid(row=0, column=1)
+        # Configure the grid layout to center the canvas
+        window.grid_rowconfigure(1, weight=1)
+        window.grid_columnconfigure(1, weight=1)
 
-    # Assuming app.melody is a music21 stream object containing your melody
-    # Generate sheet music image
-    image_path = generate_sheet_music_image(app.melody)
+        canvas.grid(row=0, column=1)
 
-    # Inside the staff function
-    print(f"Image Path: {str(image_path)}")
+        # Function to handle mouse clicks on the canvas
+        def on_canvas_click(event):
+            # x and y are the coordinates of the mouse click
+            x, y = event.x, event.y
 
-    # Display the sheet music image in Tkinter
-    display_sheet_music(root, image_path)
+            # Create a semi-transparent red marker
+            radius = 5
+            marker = canvas.create_oval(x - radius, y - radius, x + radius, y + radius, fill='red', stipple='gray50')
+
+        # Bind the mouse click event to the canvas
+        canvas.bind("<Button-1>", on_canvas_click)
+
+    # Use a flag `display_notes` to determine which version to display
+
+    if display_notes:
+        # Generate the image with notes
+        image_path = generate_sheet_music_image(app.melody)
+    else:
+        # Generate the image without notes
+        image_path = generate_sheet_music_image(create_no_notes_version(app.melody))  # Assume you have this version
+
+    # Crop the image to black pixels and add padding
+    cropped_image = crop_to_black_pixels(image_path)
+
+    # Ensure the 'img' directory exists
+    if not os.path.exists('img'):
+        os.mkdir('img')
+
+    # Generate a unique filename for the cropped image
+    cropped_image_path = generate_unique_filename(base="img/temp_cropped")
+
+    # Save the cropped image
+    cropped_image.save(cropped_image_path)
+
+    # Display the cropped image in Tkinter
+    display_sheet_music(root, cropped_image_path)

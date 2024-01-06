@@ -78,8 +78,16 @@ class App:
 
         settings(self, root)
 
+        # Create a frame for the buttons
+        buttons_frame = tk.Frame(root)
+        buttons_frame.grid(row=7, column=0, columnspan=4, sticky="ew")
+
+        # Configure the grid to allow the frame to expand and fill the space
+        root.grid_rowconfigure(7, weight=1)
+        root.grid_columnconfigure(0, weight=1)
+
         # Buttons for melody generation and playback
-        generate_btn = tk.Button(root, text="Generate Melody", command=lambda: app.on_generate_melody(
+        generate_btn = tk.Button(buttons_frame, text="Generate Melody", command=lambda: app.on_generate_melody(
             root=root,
             generation_mode=app.mode_var.get(), 
             scale_type=app.scale_type_var.get(), 
@@ -91,17 +99,22 @@ class App:
             time_signature=app.time_signature_var.get(), 
             min_octave=app.min_octave_var.get(),
             max_octave=app.max_octave_var.get()))
-        play_btn = tk.Button(root, text="Play Melody", command=lambda: play_melody(app))
+        reveal_btn = tk.Button(buttons_frame, text="Reveal Notes", command=lambda: self.on_reveal_melody(root))
+        play_btn = tk.Button(buttons_frame, text="Play Melody", command=lambda: play_melody(self))
 
-        # Position the buttons below the scale/interval frames
-        generate_btn.grid(row=7, column=0, columnspan=2, padx=10, pady=10)
-        play_btn.grid(row=7, column=2, columnspan=2, padx=10, pady=10)
+        # Pack the buttons in the buttons frame with padding and expand/fill options
+        generate_btn.pack(side=tk.LEFT, padx=20, expand=True, fill=tk.BOTH)
+        reveal_btn.pack(side=tk.LEFT, padx=5, expand=True, fill=tk.BOTH)
+        play_btn.pack(side=tk.LEFT, padx=20, expand=True, fill=tk.BOTH)
 
         # Canvas for displaying music staff - further implementation needed
         canvas = tk.Canvas(root, width=500, height=0)
         canvas.grid(row=8, column=0, columnspan=4, padx=10, pady=10)
 
         root.mainloop()
+
+    def on_reveal_melody(self, root):
+        staff(app, root, display_notes=True)
 
     def on_generate_melody(self, root, generation_mode, scale_type, key, scale_degrees, allowed_intervals, length, tempo, time_signature, min_octave, max_octave):
         global melody

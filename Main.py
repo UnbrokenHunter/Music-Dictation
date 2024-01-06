@@ -94,12 +94,12 @@ class App:
         play_btn = tk.Button(root, text="Play Melody", command=lambda: play_melody(app))
 
         # Position the buttons below the scale/interval frames
-        generate_btn.grid(row=6, column=0, columnspan=2, padx=10, pady=10)
-        play_btn.grid(row=6, column=2, columnspan=2, padx=10, pady=10)
+        generate_btn.grid(row=7, column=0, columnspan=2, padx=10, pady=10)
+        play_btn.grid(row=7, column=2, columnspan=2, padx=10, pady=10)
 
         # Canvas for displaying music staff - further implementation needed
-        canvas = tk.Canvas(root, width=500, height=200)
-        canvas.grid(row=7, column=0, columnspan=4, padx=10, pady=10)
+        canvas = tk.Canvas(root, width=500, height=0)
+        canvas.grid(row=8, column=0, columnspan=4, padx=10, pady=10)
 
         root.mainloop()
 

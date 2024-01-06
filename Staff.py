@@ -37,8 +37,8 @@ def staff(app, root):
 
         # Remove titles and other metadata
         stream.metadata = metadata.Metadata()
-        stream.metadata.title = None
-        stream.metadata.composer = None
+        stream.metadata.title = " "
+        stream.metadata.composer = " "
 
         # Set page layout settings to minimize background
         # Adjust as necessary to suit your needs
@@ -63,17 +63,25 @@ def staff(app, root):
         latest_file = fp
         return fp
 
-    # Function to display the sheet music in Tkinter
     def display_sheet_music(window, image_path):
-        # Load the image
+        global img_photo  # Use a global variable to keep a reference to the image
+
+        # Load the new image
         img = Image.open(image_path)
         img = img.resize((500, int(1.41 * 500)))  # Resize as needed
         img_photo = ImageTk.PhotoImage(img)
 
-        # Inside display_sheet_music function
+        # Update or recreate the label with the new image
         label = Label(window, image=img_photo)
-        label.image = img_photo
-        label.grid()  # Change to grid, or adjust as per your layout
+        label.image = img_photo  # Keep a reference to the image
+
+        # Configure the grid layout to center the label
+        window.grid_rowconfigure(0, weight=1)
+        window.grid_rowconfigure(2, weight=1)
+        window.grid_columnconfigure(0, weight=1)
+        window.grid_columnconfigure(2, weight=1)
+    
+        label.grid(row=0, column=1)
 
     # Assuming app.melody is a music21 stream object containing your melody
     # Generate sheet music image

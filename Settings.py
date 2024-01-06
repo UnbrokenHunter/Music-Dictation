@@ -44,7 +44,7 @@ def settings(app, root):
     # Keys (Dropdown) with default value
     key_label = tk.Label(general_settings_frame, text="Select key:")
     key_label.grid(row=2, column=2, sticky='w')
-    app.key_var = ttk.Combobox(general_settings_frame, values=["C", "D", "E", "F", "G", "A", "B"], state="readonly")
+    app.key_var = ttk.Combobox(general_settings_frame, values=["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"], state="readonly")
     app.key_var.set("C")  # Default value
     app.key_var.grid(row=2, column=3, sticky='w')
 
@@ -58,7 +58,7 @@ def settings(app, root):
     # Time Signature (Dropdown)
     time_signature_label = tk.Label(general_settings_frame, text="Time Signature:")
     time_signature_label.grid(row=2, column=6, sticky='w')
-    app.time_signature_var = ttk.Combobox(general_settings_frame, values=["4/4", "3/4", "2/4", "6/8"], state="readonly")
+    app.time_signature_var = ttk.Combobox(general_settings_frame, values=["4/4", "3/4", "2/4", "6/8", "5/4", "7/8", "15/16"], state="readonly")
     app.time_signature_var.set("4/4")  # Default value
     app.time_signature_var.grid(row=2, column=7, sticky='w')
 

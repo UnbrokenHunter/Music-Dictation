@@ -1,5 +1,5 @@
 import music21
-from music21 import metadata
+from music21 import stream, clef, note, metadata, pitch, duration, chord
 from tkinter import *
 from PIL import Image, ImageTk
 import os, shutil
@@ -8,23 +8,27 @@ from copy import deepcopy
 
 latest_file = None  # Global variable to keep track of the latest file
 img_photo = None
+dots = []  # List to store the coordinates of the dots
+canvas = None
 
 def create_no_notes_version(melody_stream):
     # Create a deep copy of the melody stream using Python's deepcopy
     no_notes_stream = deepcopy(melody_stream)
 
-    i = 0
+    # A flag to track if the first note/chord has been encountered
+    first_note_encountered = False
 
-    # Iterate over the elements and replace notes with rests
+    # Iterate over the elements and replace notes with rests starting from the second note
     for element in no_notes_stream.recurse():
-        if i > 1:
-            if isinstance(element, music21.note.Note) or isinstance(element, music21.chord.Chord):
+        if isinstance(element, (music21.note.Note, music21.chord.Chord)):
+            if first_note_encountered:
                 # Replace the note or chord with a rest of the same duration
                 rest = music21.note.Rest(duration=element.duration)
                 index = element.getOffsetBySite(no_notes_stream)
                 no_notes_stream.remove(element, recurse=True)
                 no_notes_stream.insert(index, rest)
-        i += 1
+            else:
+                first_note_encountered = True  # Mark that the first note/chord has been encountered
 
     return no_notes_stream
 
@@ -76,7 +80,10 @@ def staff(app, root, display_notes=False):
 
     print("Staff Method")
 
-    def generate_sheet_music_image(stream):
+    if display_notes == False:
+        dots.clear()
+
+    def generate_sheet_music_image(streams):
         global latest_file
 
         if not os.path.exists("img"):
@@ -96,45 +103,90 @@ def staff(app, root, display_notes=False):
         # Generate a new unique filename
         file_path = generate_unique_filename(base="img/temp_score")
 
+        def split_into_staves(streams):
+            treble_staff = stream.PartStaff()
+            treble_staff.clef = clef.TrebleClef()
+
+            bass_staff = stream.PartStaff()
+            bass_staff.clef = clef.BassClef()
+
+            # Define the cutoff pitch (e.g., Middle C)
+            cutoff_pitch = pitch.Pitch('C4')
+            current_offset = 0.0  # Keep track of the current offset
+
+            for element in streams.recurse():
+                if isinstance(element, note.Note):
+                    # Decide the staff based on the pitch of the note
+                    if element.pitch >= cutoff_pitch:
+                        treble_staff.insert(current_offset, element)
+                    else:
+                        bass_staff.insert(current_offset, element)
+                    current_offset += element.duration.quarterLength
+                elif isinstance(element, chord.Chord):
+                    # For chords, check if the root note is above or below the cutoff
+                    if element.root().pitch >= cutoff_pitch:
+                        treble_staff.insert(current_offset, element)
+                    else:
+                        bass_staff.insert(current_offset, element)
+                    current_offset += element.duration.quarterLength
+                elif isinstance(element, note.Rest):
+                    # For rests, place a quarter rest in both staves
+                    quarter_rest = note.Rest(duration=duration.Duration("quarter"))
+                    treble_staff.append(quarter_rest)
+                    bass_staff.append(quarter_rest)
+                elif isinstance(element, (music21.meter.TimeSignature, music21.key.KeySignature)):
+                    # Insert time signatures and key signatures at the beginning
+                    treble_staff.insert(0, deepcopy(element))
+                    bass_staff.insert(0, deepcopy(element))
+
+            return treble_staff, bass_staff
+
+        # Create PartStaff objects for treble and bass
+        treble_staff = stream.PartStaff()
+        bass_staff = stream.PartStaff()
+    
+        # Assign clefs to each staff
+        treble_staff.clef = clef.TrebleClef()
+        bass_staff.clef = clef.BassClef()
+    
+        # Add a whole rest to each staff to ensure they are displayed
+        whole_rest = note.Rest(duration=duration.Duration("whole"))
+        treble_staff.append(whole_rest)
+        bass_staff.append(whole_rest)
+    
+        # Split notes into treble and bass staves
+        treble_staff, bass_staff = split_into_staves(streams)
+    
+        # Create a grand staff (a Score object) and add the treble and bass PartStaffs
+        grand_staff = stream.Score()
+        grand_staff.insert(0, treble_staff)
+        grand_staff.insert(0, bass_staff)
+    
         # Remove titles and other metadata
-        stream.metadata = metadata.Metadata()
-        stream.metadata.title = " "
-        stream.metadata.composer = " "
+        grand_staff.metadata = metadata.Metadata()
+        grand_staff.metadata.title = " "
+        grand_staff.metadata.composer = " "
 
-        # Set page layout settings to minimize background
-        # Adjust as necessary to suit your needs
-        for pageLayout in stream.recurse(classFilter=('PageLayout',)):
-            pageLayout.leftMargin = 10
-            pageLayout.rightMargin = 10
-            pageLayout.topMargin = 10
-            pageLayout.bottomMargin = 10
-
-        # Adjust system layout settings
-        for systemLayout in stream.recurse().getElementsByClass('SystemLayout'):
-            systemLayout.systemDistance = 150  # Adjust this value as needed
-
-        # Generate the score and write it to a MusicXML file
-        musicxml_path = stream.write('musicxml')
-
-        # Set the path to MuseScore
-        # Replace 'path_to_musescore' with the actual path to the MuseScore3.exe file on your system
-        music21.environment.set('musescoreDirectPNGPath', "C:\Program Files\MuseScore 4\\bin\MuseScore4.exe")
-
-        # Convert MusicXML to PNG using music21
-        # The write method returns the path to the generated PNG file
-        fp = music21.converter.parse(musicxml_path).write('musicxml.png', fp=file_path)
+        # Write the grand staff to a MusicXML file
+        musicxml_path = grand_staff.write('musicxml')
+    
+        # Set the path to MuseScore and convert MusicXML to PNG
+        music21.environment.set('musescoreDirectPNGPath', r"C:\\Program Files\\MuseScore 4\\bin\\MuseScore4.exe")
+        png_path = music21.converter.parse(musicxml_path).write('musicxml.png', fp=file_path)
+    
         # Update the latest_file variable
-        latest_file = fp
-        return fp
+        latest_file = png_path
+        return png_path
 
     def display_sheet_music(window, image_path):
         global img_photo  # Use a global variable to keep a reference to the image
+        global canvas
 
         # Load the image from the file path
         img = Image.open(image_path)
 
         # Desired width or height
-        desired_width = int(window.winfo_screenwidth() * 2/3)
+        desired_width = int(window.winfo_screenwidth() * 2/5)
         desired_height = 500
 
         # Calculate the aspect ratio
@@ -172,8 +224,24 @@ def staff(app, root, display_notes=False):
             radius = 5
             marker = canvas.create_oval(x - radius, y - radius, x + radius, y + radius, fill='red', stipple='gray50')
 
+            # Store the coordinates of the dot in the dots list
+            dots.append((x, y))
+
+            # Convert the dots list to a string and print it
+            dots_str = ", ".join(map(str, dots))
+            print("Dots added: " + dots_str)
+
         # Bind the mouse click event to the canvas
         canvas.bind("<Button-1>", on_canvas_click)
+
+    # Function to display dots on the canvas
+    def display_dots():
+        global canvas
+        for x, y in dots:
+            # Create a semi-transparent red marker
+            radius = 5
+            marker = canvas.create_oval(x - radius, y - radius, x + radius, y + radius, fill='red', stipple='gray50')
+
 
     # Use a flag `display_notes` to determine which version to display
 
@@ -199,3 +267,6 @@ def staff(app, root, display_notes=False):
 
     # Display the cropped image in Tkinter
     display_sheet_music(root, cropped_image_path)
+
+    # Display the dots on the canvas    
+    display_dots()

@@ -50,6 +50,8 @@ def generate_random_melody(generation_mode, scale_type, key, scale_degrees, inte
     key_signature = key.asKey()
     melody_stream.append(key_signature)
 
+    print("Chosen Scale: " + chosen_scale.name + "Chosen Key: " + key.name)
+
     # Set the time signature
     melody_stream.append(music21.meter.TimeSignature(time_signature))
 
@@ -115,7 +117,7 @@ def generate_random_melody(generation_mode, scale_type, key, scale_degrees, inte
         # Generate melody based on scale degrees
         for _ in range(length):
             scale_degree_name = random.choice(allowedDegrees)
-            note_pitch = chosen_scale.pitchFromDegree(scale_note_to_int[scale_degree_name])
+            note_pitch = key.pitchFromDegree(scale_note_to_int[scale_degree_name])
             
             # Randomly choose to go up or down
             direction = random.choice([-1, 1])

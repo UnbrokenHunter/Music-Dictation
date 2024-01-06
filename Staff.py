@@ -11,6 +11,19 @@ img_photo = None
 dots = []  # List to store the coordinates of the dots
 canvas = None
 
+def convert_fraction_to_float(input_str):
+    try:
+        if '/' in input_str:
+            # Handle as a fraction
+            numerator, denominator = input_str.split('/')
+            return float(numerator) / float(denominator)
+        else:
+            # Handle as a regular integer or float
+            return float(input_str)
+    except (ValueError, ZeroDivisionError):
+        print("Invalid input or division by zero")
+        return None  # or a default value
+
 def create_no_notes_version(melody_stream):
     # Create a deep copy of the melody stream using Python's deepcopy
     no_notes_stream = deepcopy(melody_stream)
@@ -186,7 +199,9 @@ def staff(app, root, display_notes=False):
         img = Image.open(image_path)
 
         # Desired width or height
-        desired_width = int(window.winfo_screenwidth() * 2/5)
+        input_str = app.ui_scale_var.get()  # Get the string from the Entry widget
+        ui_scale = convert_fraction_to_float(input_str)
+        desired_width = int(window.winfo_screenwidth() * ui_scale)
         desired_height = 500
 
         # Calculate the aspect ratio

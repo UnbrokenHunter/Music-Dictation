@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 
 from Settings import settings
 from GenerateMelody import generate_random_melody
@@ -16,6 +17,7 @@ class App:
     time_signature_var = None
     min_octave_var = None
     max_octave_var = None    
+    ui_scale_var = None    
     length_var = None
     melody = None 
 
@@ -53,6 +55,9 @@ class App:
         if hasattr(self, 'max_octave_var'):
             debug_string += f"Max Octave: {self.max_octave_var.get()}\n"
 
+        if hasattr(self, 'ui_scale_var'):
+            debug_string += f"UI Scale: {self.ui_scale_var.get()}\n"
+
         if hasattr(self, 'length_var'):
             debug_string += f"Length: {self.length_var.get()}\n"
         
@@ -74,6 +79,7 @@ class App:
         global time_signature_var
         global min_octave_var
         global max_octave_var
+        global ui_scale_var
         global length_var
 
         settings(self, root)
@@ -136,6 +142,7 @@ class App:
         app.print_debug()
 
         staff(app, root)
+        play_melody(self)
 
 if __name__ == "__main__":
     app = App()  # Create an instance of the App class

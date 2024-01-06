@@ -5,6 +5,11 @@ def generate_random_melody(generation_mode, scale_type, key, scale_degrees, inte
     # Create a music21 stream for the melody
     melody_stream = music21.stream.Stream()
 
+    possible_keys = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+
+    if key == "Random":
+        key = random.choice(possible_keys)
+
     # Function to safely convert string to integer
     def safe_str_to_int(s, default=0):
         try:
@@ -41,7 +46,6 @@ def generate_random_melody(generation_mode, scale_type, key, scale_degrees, inte
     # Set the time signature
     melody_stream.append(music21.meter.TimeSignature(time_signature))
 
-    # Set the key signature
     key = music21.key.Key(key)
     key_signature = key.asKey()
     melody_stream.append(key_signature)

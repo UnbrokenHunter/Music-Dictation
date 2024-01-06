@@ -44,7 +44,7 @@ def settings(app, root):
     # Keys (Dropdown) with default value
     key_label = tk.Label(general_settings_frame, text="Select key:")
     key_label.grid(row=2, column=2, sticky='w')
-    app.key_var = ttk.Combobox(general_settings_frame, values=["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"], state="readonly")
+    app.key_var = ttk.Combobox(general_settings_frame, values=["Random", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"], state="readonly")
     app.key_var.set("C")  # Default value
     app.key_var.grid(row=2, column=3, sticky='w')
 
@@ -75,6 +75,13 @@ def settings(app, root):
     app.max_octave_var = tk.Entry(general_settings_frame)
     app.max_octave_var.insert(0, "5")  # Default value
     app.max_octave_var.grid(row=3, column=3, sticky='w')
+
+    # UI Scale (Text Input) with default value
+    ui_scale_label = tk.Label(general_settings_frame, text="UI Scale:")
+    ui_scale_label.grid(row=3, column=4, sticky='w')  # Adjusted the row for proper layout
+    app.ui_scale_var = tk.Entry(general_settings_frame)
+    app.ui_scale_var.insert(0, "2/3")  # Default value
+    app.ui_scale_var.grid(row=3, column=5, sticky='w')
 
     # Scale or Interval settings section title
     scale_interval_label = tk.Label(root, text="Scale Settings", font=title_font)

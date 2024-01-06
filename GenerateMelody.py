@@ -1,38 +1,92 @@
 import random
-import music21  # Make sure to install the music21 library
+import music21
 
-def generate_random_melody(scale_type, key, allowed_intervals, length, tempo, time_signature):
+def generate_random_melody(generation_mode, scale_type, key, scale_degrees, intervals_list, length, tempo, time_signature, min_octave, max_octave):
     # Create a music21 stream for the melody
     melody_stream = music21.stream.Stream()
 
+    # Function to safely convert string to integer
+    def safe_str_to_int(s, default=0):
+        try:
+            return int(s)
+        except ValueError:
+            return default
+
     # Define the chosen scale based on the scale_type and key
-    if scale_type == "Major":
-        chosen_scale = music21.scale.MajorScale(key)
-    elif scale_type == "Minor":
-        chosen_scale = music21.scale.NaturalMinorScale(key)
-    elif scale_type == "Natural Minor":
-        chosen_scale = music21.scale.NaturalMinorScale(key)
-    elif scale_type == "Harmonic Minor":
-        chosen_scale = music21.scale.HarmonicMinorScale(key)
-    elif scale_type == "Chromatic":
-        chosen_scale = music21.scale.ChromaticScale(key)
-    else:
-        # Default to Major scale if scale_type is not recognized
-        chosen_scale = music21.scale.MajorScale(key)
+    scale_classes = {
+        "Major": music21.scale.MajorScale,
+        "Minor": music21.scale.MinorScale,
+        "Melodic Minor": music21.scale.MelodicMinorScale,
+        "Harmonic Minor": music21.scale.HarmonicMinorScale,
+        "Chromatic": music21.scale.ChromaticScale
+    }
+
+    # Define the dictionary for scale note mapping
+    scale_note_to_int = {
+        "Tonic": 1,
+        "Supertonic": 2,
+        "Mediant": 3,
+        "Subdominant": 4,
+        "Dominant": 5,
+        "Submediant": 6,
+        "Leading Tone": 7
+    }
+
+    chosen_scale = scale_classes.get(scale_type, music21.scale.MajorScale)(key)
 
     # Set the time signature
     melody_stream.append(music21.meter.TimeSignature(time_signature))
 
     # Generate the melody
-    current_note = random.choice(chosen_scale.getPitches(key, key.octave, key.octave + 1))
-    for _ in range(length):
-        melody_stream.append(music21.note.Note(current_note))
-        # Randomly select the next interval
-        next_interval = random.choice(allowed_intervals)
-        # Calculate the next note based on the interval
-        next_note_index = chosen_scale.getScale().index(current_note.name)
-        next_note_index += music21.interval.Interval(next_interval).semitones
-        current_note = chosen_scale.getScale()[next_note_index]
+    if generation_mode == "Interval":
+        # Generate melody based on intervals
+        current_pitch = random.choice(chosen_scale.getPitches())
+
+        # Convert min and max octave values to integers
+        min_octave = safe_str_to_int(min_octave, default=3)  # default to 3 if conversion fails
+        max_octave = safe_str_to_int(max_octave, default=5)  # default to 5 if conversion fails
+        print(list(intervals_list.keys()))
+
+        allowedIntervals = []
+
+        for interval in intervals_list:
+            print(f"I: {intervals_list[interval]}")
+            if intervals_list[interval] == True:
+                allowedIntervals.append(interval)
+
+        for _ in range(length):
+            melody_stream.append(music21.note.Note(current_pitch))
+
+            # Choose a random interval from the allowed ones
+            next_interval_name = random.choice(allowedIntervals)
+
+            # Randomly choose to go up or down
+            direction = random.choice([-1, 1])
+
+            # Function to transpose and check octave range
+            def transpose_and_check(pitch, interval_name, direction):
+                interval_obj = music21.interval.Interval(interval_name)
+                interval_semitones = direction * interval_obj.semitones
+                next_interval = music21.interval.Interval(interval_semitones)
+                new_pitch = pitch.transpose(next_interval)
+                return new_pitch
+
+            # Transpose the current pitch by the chosen interval and check the octave
+            new_pitch = transpose_and_check(current_pitch, next_interval_name, direction)
+
+            # If the new note is outside the desired octave range, flip the interval direction
+            if not (min_octave <= new_pitch.octave <= max_octave):
+                new_pitch = transpose_and_check(current_pitch, next_interval_name, -direction)
+
+            # Update the current pitch and append the note to the melody stream
+            current_pitch = new_pitch
+
+    elif generation_mode == "Scale":
+        # Generate melody based on scale degrees
+        for _ in range(length):
+            scale_degree_name = random.choice(list(scale_degrees.keys()))
+            note_pitch = chosen_scale.pitchFromDegree(scale_note_to_int[scale_degree_name])
+            melody_stream.append(music21.note.Note(note_pitch))
 
     # Add a tempo mark to the melody
     melody_stream.append(music21.tempo.MetronomeMark("q = " + str(tempo)))

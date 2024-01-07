@@ -44,7 +44,7 @@ def settings(app, root):
     # Keys (Dropdown) with default value
     key_label = tk.Label(general_settings_frame, text="Select key:")
     key_label.grid(row=2, column=2, sticky='w')
-    app.key_var = ttk.Combobox(general_settings_frame, values=["Random", "C", "G", "D", "A", "E", "B", "F#", "C#", "F", "Bb", "Eb", "Ab", "Db", "Gb", "Cb"], state="readonly")
+    app.key_var = ttk.Combobox(general_settings_frame, values=["Random", "Chromatic", "C", "G", "D", "A", "E", "B", "F#", "C#", "F", "Bb", "Eb", "Ab", "Db", "Gb", "Cb"], state="readonly")
     app.key_var.set("C")  # Default value
     app.key_var.grid(row=2, column=3, sticky='w')
 
@@ -98,15 +98,9 @@ def settings(app, root):
         checkbox = tk.Checkbutton(scale_frame, text=note, variable=var)
         checkbox.grid(row=i // 4, column=i % 4, sticky='w', padx=5, pady=2)
 
-    # Dropdown for scale types
-    scale_types = ["Major", "Minor", "Natural Minor", "Harmonic Minor", "Chromatic"]
-    app.scale_type_var = ttk.Combobox(scale_frame, values=scale_types,  textvariable="Major")
-    app.scale_type_var.current(0)
-    app.scale_type_var.grid(row=4, columnspan=4, padx=5, pady=2)
-
     # Frame for Interval options
     interval_frame = tk.Frame(root)
-    intervals = ["P1", "m2", "M2", "m3", "M3", "P4", "P5", "m6", "M6", "m7", "M7", "P8"]
+    intervals = ["P1", "m2", "M2", "m3", "M3", "P4", "d5", "P5", "m6", "M6", "m7", "M7", "P8"]
     for i, interval in enumerate(intervals):
         var = tk.BooleanVar()
         app.interval_vars[interval] = var

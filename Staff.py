@@ -89,7 +89,7 @@ def crop_to_black_pixels(image_path, padding=20):
         # No non-white pixels found; return original image
         return img
 
-def staff(app, root, display_notes=False):
+def staff(app, root, is_chromatic, display_notes=False):
 
     if display_notes == False:
         dots.clear()
@@ -126,6 +126,7 @@ def staff(app, root, display_notes=False):
             current_offset = 0.0  # Keep track of the current offset
 
             print("\nStaff Notes\n-----------\n")
+            print(f"Is Chromatic: {is_chromatic}")
 
             key = streams.keySignature
 
@@ -138,12 +139,13 @@ def staff(app, root, display_notes=False):
                         bass_staff.insert(current_offset, element)
                     current_offset += element.duration.quarterLength
                     
-                    nStep = element.pitch.step
-                    rightAccidental = key.accidentalByStep(nStep)
-                    element.pitch.accidental = rightAccidental
+                    if not is_chromatic:
+                        nStep = element.pitch.step
+                        rightAccidental = key.accidentalByStep(nStep)
+                        element.pitch.accidental = rightAccidental
 
-                    print(f"{element.pitch} \n")
-                    
+                    # print(f"{element.pitch} \n")
+
                 elif isinstance(element, chord.Chord):
                     # For chords, check if the root note is above or below the cutoff
                     if element.root().pitch >= cutoff_pitch:

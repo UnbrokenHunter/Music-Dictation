@@ -16,15 +16,15 @@
     </scaling>
   </defaults>
   <part-list>
-    <score-part id="P9808a94131e60e7f492af40bbcf489ae">
+    <score-part id="Pb81fb389b5e2b6ecc69b2fd52cd658c4">
       <part-name />
     </score-part>
-    <score-part id="P8f2869aff9a13d3f159818f97bd23695">
+    <score-part id="Paaf051677e99352049905c3cfd68f1ce">
       <part-name />
     </score-part>
   </part-list>
   <!--=========================== Part 1 ===========================-->
-  <part id="P9808a94131e60e7f492af40bbcf489ae">
+  <part id="Pb81fb389b5e2b6ecc69b2fd52cd658c4">
     <!--========================= Measure 1 ==========================-->
     <measure number="1">
       <attributes>
@@ -42,52 +42,69 @@
           <line>2</line>
         </clef>
       </attributes>
-      <note print-object="no" print-spacing="yes">
-        <rest />
+      <note>
+        <pitch>
+          <step>C</step>
+          <octave>4</octave>
+        </pitch>
         <duration>10080</duration>
         <type>quarter</type>
       </note>
       <note>
         <pitch>
-          <step>E</step>
-          <octave>5</octave>
+          <step>B</step>
+          <octave>4</octave>
         </pitch>
         <duration>10080</duration>
         <type>quarter</type>
       </note>
-      <note print-object="no" print-spacing="yes">
-        <rest />
-        <duration>20160</duration>
-        <type>half</type>
+      <note>
+        <pitch>
+          <step>C</step>
+          <octave>4</octave>
+        </pitch>
+        <duration>10080</duration>
+        <type>quarter</type>
+      </note>
+      <note>
+        <pitch>
+          <step>C</step>
+          <octave>4</octave>
+        </pitch>
+        <duration>10080</duration>
+        <type>quarter</type>
       </note>
     </measure>
     <!--========================= Measure 2 ==========================-->
     <measure number="2">
       <note>
         <pitch>
-          <step>A</step>
-          <octave>5</octave>
+          <step>G</step>
+          <octave>4</octave>
         </pitch>
         <duration>10080</duration>
         <type>quarter</type>
       </note>
       <note>
         <pitch>
-          <step>A</step>
-          <octave>5</octave>
+          <step>F</step>
+          <octave>4</octave>
         </pitch>
-        <duration>10080</duration>
-        <type>quarter</type>
-      </note>
-      <note print-object="no" print-spacing="yes">
-        <rest />
         <duration>10080</duration>
         <type>quarter</type>
       </note>
       <note>
         <pitch>
           <step>E</step>
-          <octave>5</octave>
+          <octave>4</octave>
+        </pitch>
+        <duration>10080</duration>
+        <type>quarter</type>
+      </note>
+      <note>
+        <pitch>
+          <step>F</step>
+          <octave>4</octave>
         </pitch>
         <duration>10080</duration>
         <type>quarter</type>
@@ -98,7 +115,7 @@
     </measure>
   </part>
   <!--=========================== Part 2 ===========================-->
-  <part id="P8f2869aff9a13d3f159818f97bd23695">
+  <part id="Paaf051677e99352049905c3cfd68f1ce">
     <!--========================= Measure 1 ==========================-->
     <measure number="1">
       <attributes>
@@ -116,55 +133,16 @@
           <line>4</line>
         </clef>
       </attributes>
-      <note>
-        <pitch>
-          <step>A</step>
-          <octave>3</octave>
-        </pitch>
-        <duration>10080</duration>
-        <type>quarter</type>
-      </note>
       <note print-object="no" print-spacing="yes">
-        <rest />
-        <duration>10080</duration>
-        <type>quarter</type>
-      </note>
-      <note>
-        <pitch>
-          <step>B</step>
-          <octave>3</octave>
-        </pitch>
-        <duration>10080</duration>
-        <type>quarter</type>
-      </note>
-      <note>
-        <pitch>
-          <step>A</step>
-          <octave>3</octave>
-        </pitch>
-        <duration>10080</duration>
-        <type>quarter</type>
+        <rest measure="yes" />
+        <duration>40320</duration>
       </note>
     </measure>
     <!--========================= Measure 2 ==========================-->
     <measure number="2">
       <note print-object="no" print-spacing="yes">
-        <rest />
-        <duration>20160</duration>
-        <type>half</type>
-      </note>
-      <note>
-        <pitch>
-          <step>A</step>
-          <octave>3</octave>
-        </pitch>
-        <duration>10080</duration>
-        <type>quarter</type>
-      </note>
-      <note print-object="no" print-spacing="yes">
-        <rest />
-        <duration>10080</duration>
-        <type>quarter</type>
+        <rest measure="yes" />
+        <duration>40320</duration>
       </note>
       <barline location="right">
         <bar-style>light-heavy</bar-style>

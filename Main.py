@@ -38,10 +38,7 @@ class App:
         if (hasattr(self, 'scale_note_vars') and self.mode_var.get() == "Scale"):
             scale_note_vars_str = ', '.join(f'{key}: {val.get()}' for key, val in self.scale_note_vars.items() if val.get())
             debug_string += f"Scale Degrees: {{{scale_note_vars_str}}}\n"
-        
-        if hasattr(self, 'scale_type_var'):
-            debug_string += f"Scales: {self.scale_type_var.get()}\n"
-        
+                
         if hasattr(self, 'key_var'):
             debug_string += f"Key: {self.key_var.get()}\n"
         
@@ -78,7 +75,6 @@ class App:
         global mode_var
         global interval_vars
         global scale_note_vars
-        global scale_type_var
         global key_var
         global tempo_var
         global time_signature_var
@@ -103,7 +99,6 @@ class App:
         generate_btn = tk.Button(buttons_frame, text="Generate Melody", command=lambda: app.on_generate_melody(
             root=root,
             generation_mode=app.mode_var.get(), 
-            scale_type=app.scale_type_var.get(), 
             key=app.key_var.get(), 
             scale_degrees=app.scale_note_vars, 
             allowed_intervals=app.interval_vars, 
@@ -141,10 +136,10 @@ class App:
 
 
     def on_reveal_melody(self, root):
-        staff(app, root, display_notes=True)
+        staff(app, root, app.key_var == "Chromatic", display_notes=True)
         app.update_questions_answered()
 
-    def on_generate_melody(self, root, generation_mode, scale_type, key, scale_degrees, allowed_intervals, length, tempo, time_signature, min_octave, max_octave):
+    def on_generate_melody(self, root, generation_mode, key, scale_degrees, allowed_intervals, length, tempo, time_signature, min_octave, max_octave):
         
         print("\nGenerating Melody \n----------------\n\n")
         global melody
@@ -154,7 +149,7 @@ class App:
             
             scale_degrees_values = {key: var.get() for key, var in scale_degrees.items()}
             allowed_intervals_values = {key: var.get() for key, var in allowed_intervals.items()}
-            app.melody = generate_random_melody(generation_mode, scale_type, key, scale_degrees_values, allowed_intervals_values, length, tempo, time_signature, min_octave, max_octave)
+            app.melody = generate_random_melody(generation_mode, key, scale_degrees_values, allowed_intervals_values, length, tempo, time_signature, min_octave, max_octave)
             
             if app.melody is None:
                 print("Melody generation failed.")
@@ -163,9 +158,9 @@ class App:
         except ValueError:
             print("Length and tempo must be integers")
 
-        # app.print_debug()
+        app.print_debug()
 
-        staff(app, root)
+        staff(app, root, key == "Chromatic")
         play_melody(self)
 
 if __name__ == "__main__":

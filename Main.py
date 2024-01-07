@@ -20,9 +20,11 @@ class App:
     ui_scale_var = None    
     length_var = None
     melody = None 
+    questions_answered = 0
+    questions_answered_var = None
 
     def print_debug(self):
-        debug_string = "Debug Information:\n"
+        debug_string = "\nDebug Information:\n----------------------------\n"
         
         if hasattr(self, 'mode_var'):
             debug_string += f"Mode: {self.mode_var.get()}\n"
@@ -61,6 +63,9 @@ class App:
         if hasattr(self, 'length_var'):
             debug_string += f"Length: {self.length_var.get()}\n"
         
+        if hasattr(self, 'questions_answered'):
+            debug_string += f"Questions Answered: {self.questions_answered}\n"
+
         if hasattr(self, 'melody'):
             debug_string += f"Melody: {self.melody}\n"
         
@@ -81,6 +86,8 @@ class App:
         global max_octave_var
         global ui_scale_var
         global length_var
+        global questions_answered
+        global questions_answered_var
 
         settings(self, root)
 
@@ -117,12 +124,29 @@ class App:
         canvas = tk.Canvas(root, width=500, height=0)
         canvas.grid(row=8, column=0, columnspan=4, padx=10, pady=10)
 
+        questions_answered_var = tk.StringVar()
+        questions_answered = 0
+        questions_answered_var.set(f"Questions Answered: {questions_answered}")
+
+        questions_answered_label = tk.Label(root, textvariable=questions_answered_var)
+        questions_answered_label.grid(row=1, column=2, sticky='w', padx=10, pady=10)
+
         root.mainloop()
+
+    def update_questions_answered(self):
+        global questions_answered
+        global questions_answered_var
+        questions_answered += 1
+        questions_answered_var.set(f"Questions Answered: {questions_answered}")
+
 
     def on_reveal_melody(self, root):
         staff(app, root, display_notes=True)
+        app.update_questions_answered()
 
     def on_generate_melody(self, root, generation_mode, scale_type, key, scale_degrees, allowed_intervals, length, tempo, time_signature, min_octave, max_octave):
+        
+        print("\nGenerating Melody \n----------------\n\n")
         global melody
         try:
             length = int(length)
@@ -139,7 +163,7 @@ class App:
         except ValueError:
             print("Length and tempo must be integers")
 
-        app.print_debug()
+        # app.print_debug()
 
         staff(app, root)
         play_melody(self)

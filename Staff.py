@@ -91,8 +91,6 @@ def crop_to_black_pixels(image_path, padding=20):
 
 def staff(app, root, display_notes=False):
 
-    print("Staff Method")
-
     if display_notes == False:
         dots.clear()
 
@@ -127,6 +125,10 @@ def staff(app, root, display_notes=False):
             cutoff_pitch = pitch.Pitch('C4')
             current_offset = 0.0  # Keep track of the current offset
 
+            print("\nStaff Notes\n-----------\n")
+
+            key = streams.keySignature
+
             for element in streams.recurse():
                 if isinstance(element, note.Note):
                     # Decide the staff based on the pitch of the note
@@ -135,6 +137,13 @@ def staff(app, root, display_notes=False):
                     else:
                         bass_staff.insert(current_offset, element)
                     current_offset += element.duration.quarterLength
+                    
+                    nStep = element.pitch.step
+                    rightAccidental = key.accidentalByStep(nStep)
+                    element.pitch.accidental = rightAccidental
+
+                    print(f"{element.pitch} \n")
+                    
                 elif isinstance(element, chord.Chord):
                     # For chords, check if the root note is above or below the cutoff
                     if element.root().pitch >= cutoff_pitch:

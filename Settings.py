@@ -44,7 +44,7 @@ def settings(app, root):
     # Keys (Dropdown) with default value
     key_label = tk.Label(general_settings_frame, text="Select key:")
     key_label.grid(row=2, column=2, sticky='w')
-    app.key_var = ttk.Combobox(general_settings_frame, values=["Random", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"], state="readonly")
+    app.key_var = ttk.Combobox(general_settings_frame, values=["Random", "C", "G", "D", "A", "E", "B", "F#", "C#", "F", "Bb", "Eb", "Ab", "Db", "Gb", "Cb"], state="readonly")
     app.key_var.set("C")  # Default value
     app.key_var.grid(row=2, column=3, sticky='w')
 

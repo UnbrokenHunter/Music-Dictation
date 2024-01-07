@@ -67,7 +67,8 @@ def generate_random_melody(generation_mode, key, scale_degrees, intervals_list, 
     # Generate the melody
     if generation_mode == "Interval":
         # Generate melody based on intervals
-        current_pitch = music21.pitch.Pitch("C4")
+        print(key.tonic)
+        current_pitch = music21.pitch.Pitch(name=key.tonic, octave=4)
 
         # Convert min and max octave values to integers
         min_octave = safe_str_to_int(min_octave, default=3)  # default to 3 if conversion fails

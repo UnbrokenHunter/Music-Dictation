@@ -16,15 +16,15 @@
     </scaling>
   </defaults>
   <part-list>
-    <score-part id="Pb81fb389b5e2b6ecc69b2fd52cd658c4">
+    <score-part id="P4d36c749dfcc7e0b3b75baf368fb6bfe">
       <part-name />
     </score-part>
-    <score-part id="Paaf051677e99352049905c3cfd68f1ce">
+    <score-part id="P6ff0443183a6661ea4954a338bda8b52">
       <part-name />
     </score-part>
   </part-list>
   <!--=========================== Part 1 ===========================-->
-  <part id="Pb81fb389b5e2b6ecc69b2fd52cd658c4">
+  <part id="P4d36c749dfcc7e0b3b75baf368fb6bfe">
     <!--========================= Measure 1 ==========================-->
     <measure number="1">
       <attributes>
@@ -51,61 +51,17 @@
         <type>quarter</type>
       </note>
       <note>
-        <pitch>
-          <step>B</step>
-          <octave>4</octave>
-        </pitch>
+        <rest />
         <duration>10080</duration>
         <type>quarter</type>
       </note>
       <note>
-        <pitch>
-          <step>C</step>
-          <octave>4</octave>
-        </pitch>
+        <rest />
         <duration>10080</duration>
         <type>quarter</type>
       </note>
       <note>
-        <pitch>
-          <step>C</step>
-          <octave>4</octave>
-        </pitch>
-        <duration>10080</duration>
-        <type>quarter</type>
-      </note>
-    </measure>
-    <!--========================= Measure 2 ==========================-->
-    <measure number="2">
-      <note>
-        <pitch>
-          <step>G</step>
-          <octave>4</octave>
-        </pitch>
-        <duration>10080</duration>
-        <type>quarter</type>
-      </note>
-      <note>
-        <pitch>
-          <step>F</step>
-          <octave>4</octave>
-        </pitch>
-        <duration>10080</duration>
-        <type>quarter</type>
-      </note>
-      <note>
-        <pitch>
-          <step>E</step>
-          <octave>4</octave>
-        </pitch>
-        <duration>10080</duration>
-        <type>quarter</type>
-      </note>
-      <note>
-        <pitch>
-          <step>F</step>
-          <octave>4</octave>
-        </pitch>
+        <rest />
         <duration>10080</duration>
         <type>quarter</type>
       </note>
@@ -115,7 +71,7 @@
     </measure>
   </part>
   <!--=========================== Part 2 ===========================-->
-  <part id="Paaf051677e99352049905c3cfd68f1ce">
+  <part id="P6ff0443183a6661ea4954a338bda8b52">
     <!--========================= Measure 1 ==========================-->
     <measure number="1">
       <attributes>
@@ -133,16 +89,25 @@
           <line>4</line>
         </clef>
       </attributes>
-      <note print-object="no" print-spacing="yes">
-        <rest measure="yes" />
-        <duration>40320</duration>
+      <note>
+        <rest />
+        <duration>10080</duration>
+        <type>quarter</type>
       </note>
-    </measure>
-    <!--========================= Measure 2 ==========================-->
-    <measure number="2">
+      <note>
+        <rest />
+        <duration>10080</duration>
+        <type>quarter</type>
+      </note>
+      <note>
+        <rest />
+        <duration>10080</duration>
+        <type>quarter</type>
+      </note>
       <note print-object="no" print-spacing="yes">
-        <rest measure="yes" />
-        <duration>40320</duration>
+        <rest />
+        <duration>10080</duration>
+        <type>quarter</type>
       </note>
       <barline location="right">
         <bar-style>light-heavy</bar-style>
